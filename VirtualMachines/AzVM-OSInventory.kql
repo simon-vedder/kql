@@ -1,4 +1,4 @@
-Resources
+resources
 | where type == "microsoft.compute/virtualmachines"
 | extend parts = split(id, "/")
 | extend subscriptionId = parts[2], resourceGroupName = parts[4]

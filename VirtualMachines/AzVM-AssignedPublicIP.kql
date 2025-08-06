@@ -1,0 +1,25 @@
+resources
+| where type == "microsoft.compute/virtualmachines"
+| extend nics = properties.networkProfile.networkInterfaces
+| mv-expand nic = nics
+| extend nicId = tostring(nic.id)
+| join kind=leftouter (
+    resources
+    | where type == "microsoft.network/networkinterfaces"
+    | project nicId = id, ipConfigs = properties.ipConfigurations
+    | mv-expand ipConfig = ipConfigs
+    | extend publicIpId = tostring(ipConfig.properties.publicIPAddress.id)
+    | where isnotempty(publicIpId)
+) on nicId
+| join kind=leftouter (
+    resources
+    | where type == "microsoft.network/publicipaddresses"
+    | project publicIpId = id, publicIpName = name, publicIpAddress = properties.ipAddress
+) on publicIpId
+| project 
+    vmName = name,
+    subscriptionId = tostring(split(id, '/')[2]),
+    resourceGroup = tostring(split(id, '/')[4]),
+    publicIpName,
+    publicIpAddress
+| where isnotempty(publicIpAddress)
