@@ -1,0 +1,15 @@
+Resources
+| where type == "microsoft.compute/virtualmachines"
+| extend parts = split(id, "/")
+| extend subscriptionId = parts[2], resourceGroupName = parts[4]
+| project 
+    name, 
+    location, 
+    subscriptionId,
+    resourceGroupName,
+    osType = properties.storageProfile.osDisk.osType, 
+    osPublisher = properties.storageProfile.imageReference.publisher, 
+    osOffer = properties.storageProfile.imageReference.offer, 
+    osSku = properties.storageProfile.imageReference.sku, 
+    osExactVersion = properties.storageProfile.imageReference.exactVersion,
+    osVersion = properties.storageProfile.imageReference.version
