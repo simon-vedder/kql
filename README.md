@@ -8,12 +8,13 @@ This repository contains a curated collection of Kusto Query Language (KQL) quer
 ## 📁 Repository Structure
 
 Generally organized as follows:
+```
 kql/
 ├── VirtualNetwork
 ├── VirtualMachine
 ├── AppService
 ├── Storage
-
+```
 
 ## 🚀 How to Use
 
@@ -21,10 +22,13 @@ You can run these queries directly in the Azure Resource Graph Explorer or Log A
 
 Example: Query all Azure VMs 
 
+```
 Resources
 | where type == "microsoft.compute/virtualmachines"
 | project 
     name, 
     location, 
     subscriptionId,
-    resourceGroupName,
+    resourceGroupName
+
+```
