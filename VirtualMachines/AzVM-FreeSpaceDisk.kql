@@ -1,0 +1,10 @@
+#
+Requires: AzureMonitorAgent for Insights
+#
+InsightsMetrics
+| where TimeGenerated > ago(1h)
+| where Name == "FreeSpacePercentage"
+| extend UsedPercent = 100 - Val
+| extend MountId = tostring(parse_json(Tags)["vm.azm.ms/mountId"])
+| summarize arg_max(TimeGenerated, UsedPercent) by Computer, MountId
+| order by TimeGenerated desc
