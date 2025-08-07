@@ -1,0 +1,49 @@
+// =====================================================================
+// .TITLE
+//     AzVM-LastLoginUser
+//
+// .DESCRIPTION
+//     Retrieves local (LogonType 2) and remote desktop (LogonType 10) 
+//     login events from Windows-based Azure virtual machines.
+//     Parses Event ID 4624 (successful logon) to extract relevant login data.
+//
+// .REQUIRES
+//     - Azure Monitor Agent (AMA)
+//     - Data Collection Rule (DCR) collecting Windows Event Logs
+//         - Log Name: Security
+//         - Event ID: 4624
+//         - Level: Informational
+//     - Connected Log Analytics Workspace
+//
+// .TAGS
+//     Azure, KQL, Security, Login Audit, RDP, Local Login, Windows Event Log
+//
+// .INPUT
+//     Table: Event
+//     Source: Security Event Logs
+//     Event ID: 4624 
+//
+// .NOTES
+//     - LogonType 2 = Interactive (local sign-in)
+//     - LogonType 10 = RemoteInteractive (RDP)
+//     - Requires XML parsing of EventData field
+//
+// .AUTHOR
+//     Simon Vedder (simonvedder.com)
+//
+// .VERSION
+//     1.0
+// =====================================================================
+
+Event
+| where EventID == 4624
+//| where Computer == "winsrv"
+| extend Parsed = parse_xml(EventData)
+| extend 
+    TargetUser = tostring(Parsed.DataItem.EventData.Data[5]["#text"]),
+    TargetDomain = tostring(Parsed.DataItem.EventData.Data[6]["#text"]),
+    LogonType = tostring(Parsed.DataItem.EventData.Data[8]["#text"]),
+    Process = tostring(Parsed.DataItem.EventData.Data[17]["#text"])
+| where LogonType in ("2", "10")
+| project TimeGenerated, Computer, TargetUser, TargetDomain, LogonType, Process
+| order by TimeGenerated desc
