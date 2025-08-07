@@ -3,8 +3,8 @@
 //     PublicIP-Unattached
 //
 // .DESCRIPTION
-//     Zeigt alle öffentlichen IP-Adressen, die aktuell mit keinem
-//     Netzwerkinterface oder Load Balancer verbunden sind.
+//     List all PublicIPs which are not attached to any resource
+//     like NICs or Load Balancers.
 //
 // .REQUIRES
 //
@@ -17,8 +17,7 @@
 //       - microsoft.network/publicipaddresses
 //
 // .NOTES
-//     - Nicht zugewiesene öffentliche IPs verursachen unnötige Kosten.
-//     - Die Abfrage prüft, ob `properties.ipConfiguration.id` leer ist.
+//     - Unattached Public IPs cause unnecessary costs.
 //
 // .AUTHOR
 //     Simon Vedder (simonvedder.com)
