@@ -1,0 +1,43 @@
+// =====================================================================
+// .TITLE
+//     AzVM-WithoutMonitoringAgent
+//
+// .DESCRIPTION
+//     Lists all virtual machines that do not have either the Azure Monitor Agent (AMA)
+//     or the legacy Log Analytics Agent (MMA) installed via VM extensions.
+//
+// .REQUIRES
+//
+// .TAGS
+//     Azure, ARG, VM, Monitoring, Azure Monitor, AMA, MMA, Security
+//
+// .INPUT
+//     Table: resources
+//     Resource Types:
+//       - microsoft.compute/virtualmachines
+//
+// .NOTES
+//     - This query checks for the presence of VM extensions commonly used for monitoring:
+//         * AzureMonitorWindowsAgent / AzureMonitorLinuxAgent (AMA)
+//         * MicrosoftMonitoringAgent (MMA – old)
+//
+// .AUTHOR
+//     Simon Vedder (simonvedder.com)
+//
+// .VERSION
+//     1.0
+// =====================================================================
+
+resources
+| where type == "microsoft.compute/virtualmachines"
+| extend vmId = id
+| join kind=leftouter (
+    resources
+    | where type == "microsoft.compute/virtualmachines/extensions"
+    | extend vmId = tostring(split(id, "/extensions")[0])
+    | extend extType = tostring(properties.type)
+    | where extType in~ ("MicrosoftMonitoringAgent", "AzureMonitorWindowsAgent", "AzureMonitorLinuxAgent")
+    | project vmId, hasMonitoring = true
+) on vmId
+| where isnull(hasMonitoring)
+| project name, location, resourceGroup, subscriptionId

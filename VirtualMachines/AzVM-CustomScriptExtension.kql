@@ -1,0 +1,37 @@
+// =====================================================================
+// .TITLE
+//     AzVM-CustomScriptExtension
+//
+// .DESCRIPTION
+//     Identifies all virtual machines that have a Custom Script Extension installed.
+//     Useful for auditing scripted configurations, post-deployment tasks, or detecting
+//     potentially outdated or unused scripts.
+//
+// .REQUIRES
+//
+// .TAGS
+//     Azure, ARG, VM, Extensions, Custom Script, Audit, Configuration
+//
+// .INPUT
+//     Table: resources
+//     Resource Types:
+//       - microsoft.compute/virtualmachines/extensions
+//
+// .NOTES
+//     - Custom Script Extensions are often used for post-deployment configuration
+//       (e.g., PowerShell or Bash scripts).
+//     - You can use this to audit where such extensions are deployed, which may
+//       indicate temporary provisioning tasks or hardcoded automation.
+//     - The query extracts the VM name from the resource ID.
+//
+// .AUTHOR
+//     Simon Vedder (simonvedder.com)
+//
+// .VERSION
+//     1.0
+// =====================================================================
+
+resources
+| where type == "microsoft.compute/virtualmachines/extensions"
+| where name contains "CustomScript"
+| project vmName = tostring(split(id, '/')[8]), extensionName = name, resourceGroup, subscriptionId, location

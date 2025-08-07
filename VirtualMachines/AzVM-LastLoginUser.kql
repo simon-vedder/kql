@@ -23,6 +23,10 @@
 //     Source: Security Event Logs
 //     Event ID: 4624 
 //
+// .REQUIRES
+//
+// .TAGS
+//     Azure, ARG, VM, Login, Compliance, Governance, Security, Logs
 // .NOTES
 //     - LogonType 2 = Interactive (local sign-in)
 //     - LogonType 10 = RemoteInteractive (RDP)

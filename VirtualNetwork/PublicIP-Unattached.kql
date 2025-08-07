@@ -1,0 +1,33 @@
+// =====================================================================
+// .TITLE
+//     PublicIP-Unattached
+//
+// .DESCRIPTION
+//     Zeigt alle öffentlichen IP-Adressen, die aktuell mit keinem
+//     Netzwerkinterface oder Load Balancer verbunden sind.
+//
+// .REQUIRES
+//
+// .TAGS
+//     Azure, ARG, Public IP, Unused Resources, Cleanup, Networking
+//
+// .INPUT
+//     Table: resources
+//     Resource Type:
+//       - microsoft.network/publicipaddresses
+//
+// .NOTES
+//     - Nicht zugewiesene öffentliche IPs verursachen unnötige Kosten.
+//     - Die Abfrage prüft, ob `properties.ipConfiguration.id` leer ist.
+//
+// .AUTHOR
+//     Simon Vedder (simonvedder.com)
+//
+// .VERSION
+//     1.0
+// =====================================================================
+
+resources
+| where type == "microsoft.network/publicipaddresses"
+| where isnull(properties.ipConfiguration.id)
+| project name, location, resourceGroup, subscriptionId, properties.ipAddress
