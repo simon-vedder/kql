@@ -1,3 +1,35 @@
+// =====================================================================
+// .TITLE
+//     AZVM-AssignedPublicIP
+//
+// .DESCRIPTION
+//     Retrieves all virtual machines across all subscriptions that currently
+//     have an assigned public IP address.
+//     Joins VM resources with associated network interfaces and public IP resources.
+//
+// .REQUIRES
+//
+// .TAGS
+//     Azure, ARG, Public IP, VM Inventory, Security, Networking
+//
+// .INPUT
+//     Table: resources
+//     Resource Types:
+//       - microsoft.compute/virtualmachines
+//       - microsoft.network/networkinterfaces
+//       - microsoft.network/publicipaddresses
+//
+// .NOTES
+//     - The query expands NICs and IP configurations for each VM
+//     - Only VMs with directly associated public IPs are returned
+//
+// .AUTHOR
+//     Simon Vedder (simonvedder.com)
+//
+// .VERSION
+//     1.0
+// =====================================================================
+
 resources
 | where type == "microsoft.compute/virtualmachines"
 | extend nics = properties.networkProfile.networkInterfaces

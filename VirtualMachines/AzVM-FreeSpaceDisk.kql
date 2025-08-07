@@ -1,6 +1,38 @@
-#
-Requires: AzureMonitorAgent for Insights
-#
+// =====================================================================
+// .TITLE
+//     AZVM-FreeSpaceDisk
+//
+// .DESCRIPTION
+//     Retrieves the most recent disk usage (Used % based on free space)
+//     for each mounted volume (e.g., C:, D:) on all Azure VMs reporting
+//     to Log Analytics via the Azure Monitor Agent.
+//
+// .REQUIRES
+//     - Azure Monitor Agent (AMA) must be installed on the VM
+//     - Data Collection Rule (DCR) must be configured to collect:
+//         → Perf Counter: FreeSpacePercentage
+//     - Connected Log Analytics Workspace with enabled InsightsMetrics table
+//
+// .TAGS
+//     Azure, VM Monitoring, Disk Usage, AMA, Log Analytics, Performance
+//
+// .INPUT
+//     Table: InsightsMetrics
+//     Metric Name: "FreeSpacePercentage"
+//     Tags field: "vm.azm.ms/mountId" used to identify logical disk
+//
+// .NOTES
+//     - Calculates Used % as 100 - FreeSpacePercentage
+//     - Returns only the latest value per Computer and MountId
+//     - Useful for dashboards, alerts or periodic reporting
+//
+// .AUTHOR
+//     Simon Vedder (simonvedder.com)
+//
+// .VERSION
+//     1.0
+// =====================================================================
+
 InsightsMetrics
 | where TimeGenerated > ago(1h)
 | where Name == "FreeSpacePercentage"

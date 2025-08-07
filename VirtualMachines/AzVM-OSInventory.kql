@@ -1,3 +1,33 @@
+// =====================================================================
+// .TITLE
+//     AZVM-OSInventory
+//
+// .DESCRIPTION
+//     Retrieves operating system metadata for all Azure virtual machines
+//     across all subscriptions. Extracts details such as OS type, publisher,
+//     offer, SKU, and exact version from each VM's image reference.
+//
+// .REQUIRES
+//
+// .TAGS
+//     Azure, ARG, VM Inventory, OS, Compliance, Governance
+//
+// .INPUT
+//     Table: resources
+//     Resource Type: microsoft.compute/virtualmachines
+//
+// .NOTES
+//     - Useful for OS standardization, compliance, or lifecycle management
+//     - The exactVersion field is only available for platform images (not custom images)
+//     - Can be extended to flag unsupported OS based on organizational policy
+//
+// .AUTHOR
+//     Simon Vedder (simonvedder.com)
+//
+// .VERSION
+//     1.0
+// =====================================================================
+
 resources
 | where type == "microsoft.compute/virtualmachines"
 | extend parts = split(id, "/")
